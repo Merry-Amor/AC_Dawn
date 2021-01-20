@@ -10,6 +10,12 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
+    "puppeteer": "^5.5.0",
     "socket.io": "^3.1.0"
+  },
+  "devDependencies": {
+    "jsdom": "^16.4.0",
+    "node-fetch": "^2.6.1",
+    "scraperjs": "^1.2.0"
   }
 }

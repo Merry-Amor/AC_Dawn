@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>チャットアプリをつくってみよう</title>
+  <title>AWs Connecter Dawn</title>
   <style>
     * {margin:0; padding:0; box-sizing:border-box; }
     body { font-size: 14px; max-width: 600px; width: 100%; margin: 0 auto; padding: 0 15px; }
@@ -14,9 +14,10 @@
   </style>
 </head>
 <body>
-  <h1>チャットアプリをつくってみよう</h1>
+  <h1>AWs Connecter Dawn</h1>
   <ul id="timeline"></ul>
   <form id="chatSend" action="">
+    名前<input id="chatName" autocomplete="off"><br />
     <input id="chatText" autocomplete="off"><button class="sendButton">送信</button>
   </form>
 
@@ -26,8 +27,8 @@
         $(function () {
             var socket = io();
             $('form').submit(function(){
-                socket.emit('chat message', $('#chatText').val());
-                $('#chatText').val('');
+                socket.emit('chat message', $('#chatName').val() + ':' + $('#chatText').val());
+                $('#chatText').val('') + ':' + $('#chatText').val('');
                 return false;
             });
             socket.on('chat message', function(msg){
