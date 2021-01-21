@@ -17,15 +17,25 @@
   <h1>AWs Connecter Dawn</h1>
   <ul id="timeline"></ul>
   <form id="chatSend" action="">
-    名前<input id="chatName" autocomplete="off"><br />
+    名前<input id="chatName" autocomplete="off"><select id="select_system" class="selector"></select><br />
     <input id="chatText" autocomplete="off"><button class="sendButton">送信</button>
   </form>
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
+
+        var socket = io();
+
+        socket.emit('get system list');
+        socket.on('post system list', function(msg){
+          for (var i = 0; i < msg.length; i++) {
+              select_system.options[i] = new Option(msg[i][0], i);
+          };
+        });
+
+
         $(function () {
-            var socket = io();
             $('form').submit(function(){
                 socket.emit('chat message', $('#chatName').val() + ':' + $('#chatText').val());
                 $('#chatText').val('') + ':' + $('#chatText').val('');

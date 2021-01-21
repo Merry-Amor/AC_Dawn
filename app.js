@@ -44,6 +44,21 @@ function command_checker(msg){
   });
 }
 
+function system_list_maker() {
+  result = "";
+  msg = [];
+  systemAr = [];
+  req_uri = dice_url + '/v1/names';
+  request(req_uri, function (error, response, body) {
+    result = body;
+    result = JSON.parse(result);
+    for (var i=0; i<result.names.length; i++) {
+      systemAr = [result.names[i].name, result.names[i].system];
+      msg.push(systemAr);
+    }
+    io.emit('post system list', msg);
+  });
+}
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
@@ -54,6 +69,9 @@ io.on('connection', function(socket){
     command_checker(msg);
     console.log(dice_result)
     io.emit('chat message', msg);
+  });
+  socket.on('get system list', function(){
+    system_list_maker();
   });
 });
 
