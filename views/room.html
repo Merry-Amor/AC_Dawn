@@ -1,0 +1,86 @@
+<html>
+<head>
+  <title>AWs Connecter Dawn</title>
+  <style>
+    * {margin:0; padding:0; box-sizing:border-box; }
+    body { font-size: 14px; max-width: 600px; width: 100%; margin: 0 auto; padding: 0 15px; }
+    .chatSend { padding: 3px; position: fixed; bottom: 0; width: 100%; }
+    .chatText { border: 2px solid #ccc; padding: 10px; width: 90%; margin-right: .5%; border-radius: 5px; }
+    .sendButton { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; border-radius: 5px; }
+    #timeline { list-style-type: none; margin: 0; padding: 0; }
+    #timeline li { padding: 5px 10px; }
+    #timeline li:nth-child(odd) { background: #eee; }
+  </style>
+  <link rel="stylesheet" media="all" type="text/css" href="./asset/css/flootWindow.css">
+</head>
+<body>
+  <h1>AWs Connecter Dawn</h1>
+  <a href="#floatWindow" class="open">発言ウィンドウの表示</a>
+  <div id="floatWindow">
+    <a href="sample2.html" class="close"><img src="./asset/images/close.png" alt="閉じる" /></a>
+    <dl>
+      <dt>発言ウィンドウ</dt>
+      <dd>
+        <form id="chatSend" action="">
+          名前<input id="chatName" autocomplete="off"><select id="select_system" class="selector"></select><br />
+          <input id="chatText" autocomplete="off"><button id="sendButton" class="sendButton">送信</button>
+        </form>
+      </dd>
+    </dl>
+  </div>
+  <ul id="timeline"></ul>
+
+   <script src="/socket.io/socket.io.js"></script>
+   <!-- <script src="./asset/javascript/flootWindow.js"></script>  -->
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+
+        var socket = io();
+
+        socket.emit('get system list');
+        socket.on('post system list', function(msg){
+          for (var i = 0; i < msg.length; i++) {
+              select_system.options[i] = new Option(msg[i][0], i);
+          };
+        });
+
+        $(function () {
+              $("a.open").click(function(){
+                  $("#floatWindow").fadeIn("fast");
+                  return false;
+              })
+
+              $("#floatWindow a.close").click(function(){
+                  $("#floatWindow").fadeOut("fast");
+                  return false;
+              })
+              $("#floatWindow dl dt").mousedown(function(e){
+
+                  $("#floatWindow")
+                      .data("clickPointX" , e.pageX - $("#floatWindow").offset().left)
+                      .data("clickPointY" , e.pageY - $("#floatWindow").offset().top);
+
+                  $(document).mousemove(function(e){
+                      $("#floatWindow").css({
+                          top:e.pageY  - $("#floatWindow").data("clickPointY")+"px",
+                          left:e.pageX - $("#floatWindow").data("clickPointX")+"px"
+                      })
+                  })
+
+              }).mouseup(function(){
+                  $(document).unbind("mousemove")
+
+              })
+
+            $('form').submit(function(){
+                socket.emit('chat message', $('#chatName').val() + ':' + $('#chatText').val());
+                $('#chatText').val('') + ':' + $('#chatText').val('');
+                return false;
+            });
+            socket.on('chat message', function(msg){
+                $('#timeline').append($('<li>').text(msg));
+            });
+        });
+    </script>
+</body>
+</html>

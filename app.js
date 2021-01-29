@@ -1,12 +1,16 @@
-var app = require('express')();
+var express = require('express');
+var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 const request = require('request');
+var path = require('path');
 
 const dice_url = "https://rocky-ridge-20428.herokuapp.com"
 
 var dice_result = ""
 var system_dice = "Eireann3rd"
+
+app.use(express.static(__dirname));
 
 function command_checker(msg){
   result = ""
@@ -61,7 +65,11 @@ function system_list_maker() {
 }
 
 app.get('/', function(req, res){
-  res.sendFile(__dirname + '/index.html');
+  res.sendFile(__dirname + '/views/room.html');
+});
+
+app.get('/room/:roomId', function(req, res){
+  res.sendFile(__dirname + '/room.html');
 });
 
 io.on('connection', function(socket){
