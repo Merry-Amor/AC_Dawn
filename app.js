@@ -8,29 +8,21 @@ var path = require('path');
 const dice_url = "https://rocky-ridge-20428.herokuapp.com"
 
 var dice_result = ""
-var system_dice = "Eireann3rd"
+var system_dice = "diceBot"
 
 app.use(express.static(__dirname));
 
-function command_checker(msg){
+function command_checker(msg, system_dice){
   result = ""
   for(var i=0; i<msg.length; i++) {
-      // console.log(msg.charAt(i));
-      if(msg.charAt(i) == ':') {
-        result_num = i;
-        break;
-      } else {
-      }
-   }
-    for(var i=result_num + 1; i<msg.length; i++) {
-        console.log(msg.charAt(i));
-        if(msg.charAt(i) == "") {
-          break;
-        } else {
-        result += msg.charAt(i);
-        // console.log(result);
-        }
-     }
+    console.log(msg.charAt(i));
+    if(msg.charAt(i) == "") {
+      break;
+    } else {
+      result += msg.charAt(i);
+      // console.log(result);
+    }
+  }
   req_uri = dice_url + '/v1/diceroll?system=' + system_dice + '&command=' + result
   // console.log(req_uri)
 	request(req_uri, function (error, response, body) {
@@ -74,8 +66,16 @@ app.get('/room/:roomId', function(req, res){
 
 io.on('connection', function(socket){
   socket.on('chat message', function(msg){
-    command_checker(msg);
-    console.log(dice_result)
+    console.log(msg)
+    //msg = JSON.parse(msg)
+    text = msg.message
+    name = msg.name
+    system = msg.system
+    console.log(text)
+    console.log(name)
+    console.log(system)
+    command_checker(text, system);
+    msg = name + ':' + text
     io.emit('chat message', msg);
   });
   socket.on('get system list', function(){

@@ -2,10 +2,13 @@
 
     var socket = io();
 
+    var system_list = []
+
     socket.emit('get system list');
     socket.on('post system list', function(msg){
       for (var i = 0; i < msg.length; i++) {
           select_system.options[i] = new Option(msg[i][0], i);
+          system_list.push(msg[i][1])
       };
     });
 
@@ -38,7 +41,16 @@
           })
 
         $('form').submit(function(){
-            socket.emit('chat message', $('#chatName').val() + ':' + $('#chatText').val());
+            system_num = $("#select_system").val();
+            system_name = system_list[system_num];
+            chatText = $('#chatText').val();
+            chatName = $("#chatName").val();
+            chat_detail = {
+               message: chatText,
+               name: chatName,
+               system: system_name
+            }
+            socket.emit('chat message', chat_detail);
             $('#chatText').val('') + ':' + $('#chatText').val('');
             return false;
         });
